@@ -9,8 +9,18 @@ import (
 	// "github.com/nathan-fiscaletti/consolesize-go"
 )
 
-func Run(files []string,outfile string,extract bool){
+func getFiles(files []string) []string {
+	if (files[0] == "."){
+		//TODO: functionality to get the files in current location
+	}
+	return files
+}
+
+func Run(filesFromUser []string,outfile string,extract bool){
 	// files := []string{"main.dart","widgets.dart","themes.dart","services.dart","homescreen.dart","splashscreen.dart"}
+
+	files := getFiles(filesFromUser)
+
 	if extract{
 		fmt.Println("Extracing...")
 	} else{
@@ -29,10 +39,11 @@ func Run(files []string,outfile string,extract bool){
 	defer f.Close()
 
 	for _,file := range files{
-		fmt.Println(file)
+		fmt.Print(file)
 		fileProcessing(file,f)
-		// time.Sleep(600 * time.Millisecond)
-		fmt.Print("\033[1A\033[K")
+		// This line erases the recently printed line from terminal
+		// fmt.Print("\033[1A\033[K")
+		fmt.Println(" ✓")
 	}
 
 	// n,_ := consolesize.GetConsoleSize()
@@ -46,7 +57,8 @@ func Run(files []string,outfile string,extract bool){
 	// 	str = str + "#"
 	// }
 	//this code is to clear the latest println
-	fmt.Print("\033[1A\033[K")
+	// fmt.Print("\033[1A\033[K")
+
 	fmt.Println("Process Completed..!")
 	fmt.Print("You can find the extracted comments in the file ",outfile,"\n")
 }
@@ -55,13 +67,13 @@ func Run(files []string,outfile string,extract bool){
 
 func fileProcessing(filename string,f *os.File){
 
-	regex,ext:= GetRegex(filename)
-	if (regex == "") {
-		fmt.Printf("extension \"%v\" is not supported\n",ext)
+	isMultilineComment := false
+
+	single,mulb,mule:= GetRegex(filename)
+	if (single == "") {
+		fmt.Printf("file type of \"%v\" is not supported\n",filename)
 		os.Exit(0)
 	}
-	// re,_ :=regexp.Compile(regex)
-
 
 	file,err :=os.Open(filename)
 	ErrorCheck(err)
@@ -72,11 +84,31 @@ func fileProcessing(filename string,f *os.File){
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan(){
-		match,err:=regexp.Match(regex,[]byte(scanner.Text()))
+		matchSingleLine,err:=regexp.Match(single,[]byte(scanner.Text()))
 		ErrorCheck(err)
-		if match{
+		if matchSingleLine{
 			f.WriteString(scanner.Text()+"\n")
+			continue
 		}
+		matchMullineBegin,err:=regexp.Match(mulb,[]byte(scanner.Text()))
+		ErrorCheck(err)
+		if matchMullineBegin {
+			f.WriteString(scanner.Text()+"\n")
+			isMultilineComment = true
+			continue
+		}
+		matchMullineEnd,err:=regexp.Match(mule,[]byte(scanner.Text()))
+		ErrorCheck(err)
+		if matchMullineEnd {
+			f.WriteString(scanner.Text()+"\n")
+			isMultilineComment = false
+			continue
+		}
+		if isMultilineComment {
+			f.WriteString(scanner.Text()+"\n")
+			continue
+		}
+
 	}
 	f.WriteString("\n")
 }
