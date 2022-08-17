@@ -44,6 +44,11 @@ func commands(){
 					Aliases: []string{"e"},
 					Value: false,
 				},
+				&cli.BoolFlag{
+					Name: "lineNumber",
+					Aliases: []string{"ln"},
+					Value: false,
+				},
 			},
 			// Action upon the run command
 			Action: func (c *cli.Context) error {
@@ -58,7 +63,7 @@ func commands(){
 					outfile = c.String("output")
 				}
 				 
-				src.Run(c.StringSlice("source"),outfile,c.Bool("extract"))
+				src.Run(c.StringSlice("source"),outfile,c.Bool("extract"),c.Bool("lineNumber"))
 
 				return nil				
 			},

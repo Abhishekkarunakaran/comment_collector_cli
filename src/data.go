@@ -16,9 +16,9 @@ func getData() []DataStruct {
 		{
 			Extension: []string{"py", "r"},
 			// Python and R support only single-line comments
-			Single: `#[^!].+`,
-			MulB: "",
-			MulE: "",
+			Single: `#[^!].+$|^'.+'$`,
+			MulB: `\"\"\".*`,
+			MulE: `.*\"\"\"`,
 			// Regex:     `#[^!].+$|=begin[\s|\S]+=end$|<!--[\s|\S]-->$|:\'[\s|\S][^']+\'$`,
 		},
 		{

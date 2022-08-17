@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 	// "time"
 	// "github.com/nathan-fiscaletti/consolesize-go"
 )
@@ -16,7 +17,7 @@ func getFiles(files []string) []string {
 	return files
 }
 
-func Run(filesFromUser []string,outfile string,extract bool){
+func Run(filesFromUser []string,outfile string,extract bool,addLineNumber bool){
 	// files := []string{"main.dart","widgets.dart","themes.dart","services.dart","homescreen.dart","splashscreen.dart"}
 
 	files := getFiles(filesFromUser)
@@ -40,7 +41,7 @@ func Run(filesFromUser []string,outfile string,extract bool){
 
 	for _,file := range files{
 		fmt.Print(file)
-		fileProcessing(file,f)
+		fileProcessing(file,f,addLineNumber)
 		// This line erases the recently printed line from terminal
 		// fmt.Print("\033[1A\033[K")
 		fmt.Println(" ✓")
@@ -65,7 +66,7 @@ func Run(filesFromUser []string,outfile string,extract bool){
 
 
 
-func fileProcessing(filename string,f *os.File){
+func fileProcessing(filename string,f *os.File,addLineNumber bool){
 
 	isMultilineComment := false
 
@@ -83,32 +84,49 @@ func fileProcessing(filename string,f *os.File){
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
+	lineNumber := 1
 	for scanner.Scan(){
 		matchSingleLine,err:=regexp.Match(single,[]byte(scanner.Text()))
 		ErrorCheck(err)
 		if matchSingleLine{
+			if addLineNumber{
+				f.WriteString(strconv.Itoa(lineNumber)+" ")
+			}
 			f.WriteString(scanner.Text()+"\n")
+			lineNumber += 1
 			continue
 		}
 		matchMullineBegin,err:=regexp.Match(mulb,[]byte(scanner.Text()))
 		ErrorCheck(err)
-		if matchMullineBegin {
+		if matchMullineBegin && isMultilineComment==false {
+			if addLineNumber{
+				f.WriteString(strconv.Itoa(lineNumber)+" ")
+			}
 			f.WriteString(scanner.Text()+"\n")
 			isMultilineComment = true
+			lineNumber += 1
 			continue
 		}
 		matchMullineEnd,err:=regexp.Match(mule,[]byte(scanner.Text()))
 		ErrorCheck(err)
-		if matchMullineEnd {
+		if matchMullineEnd && isMultilineComment==true {
+			if addLineNumber{
+				f.WriteString(strconv.Itoa(lineNumber)+" ")
+			}
 			f.WriteString(scanner.Text()+"\n")
 			isMultilineComment = false
+			lineNumber += 1
 			continue
 		}
 		if isMultilineComment {
+			if addLineNumber{
+				f.WriteString(strconv.Itoa(lineNumber)+" ")
+			}
 			f.WriteString(scanner.Text()+"\n")
+			lineNumber += 1
 			continue
 		}
-
+		lineNumber += 1
 	}
 	f.WriteString("\n")
 }
