@@ -17,16 +17,16 @@ func getFiles(files []string) []string {
 	return files
 }
 
-func Run(filesFromUser []string,outfile string,extract bool,addLineNumber bool){
+func Run(filesFromUser []string,outfile string,extract bool,addLineNumber bool,deleteCmtChars bool){
 	// files := []string{"main.dart","widgets.dart","themes.dart","services.dart","homescreen.dart","splashscreen.dart"}
 
 	files := getFiles(filesFromUser)
-
 	if extract{
-		fmt.Println("Extracing...")
-	} else{
-		fmt.Println("Processing...")
+		fmt.Println("Extracting ...")
+	} else {
+		fmt.Println("Processing ...")
 	}
+
 	if CheckFileExists("outfile.txt") && outfile != "outfile.txt" {
 		e:= os.Remove("outfile.txt")
 		ErrorCheck(e)
@@ -39,11 +39,13 @@ func Run(filesFromUser []string,outfile string,extract bool,addLineNumber bool){
 	ErrorCheck(err)
 	defer f.Close()
 
+	// TODO: Test this line of code in production
+
+	// fmt.Print("\033[1A\033[K")
 	for _,file := range files{
 		fmt.Print(file)
-		fileProcessing(file,f,addLineNumber)
+		fileProcessing(file,f,addLineNumber,deleteCmtChars)
 		// This line erases the recently printed line from terminal
-		// fmt.Print("\033[1A\033[K")
 		fmt.Println(" ✓")
 	}
 
@@ -66,7 +68,7 @@ func Run(filesFromUser []string,outfile string,extract bool,addLineNumber bool){
 
 
 
-func fileProcessing(filename string,f *os.File,addLineNumber bool){
+func fileProcessing(filename string,f *os.File,addLineNumber bool,deleteCmtChars bool){
 
 	isMultilineComment := false
 
@@ -75,6 +77,7 @@ func fileProcessing(filename string,f *os.File,addLineNumber bool){
 		fmt.Printf("file type of \"%v\" is not supported\n",filename)
 		os.Exit(0)
 	}
+	cmtChars := GetCommentCharacters(filename)
 
 	file,err :=os.Open(filename)
 	ErrorCheck(err)
@@ -92,7 +95,12 @@ func fileProcessing(filename string,f *os.File,addLineNumber bool){
 			if addLineNumber{
 				f.WriteString(strconv.Itoa(lineNumber)+" ")
 			}
-			f.WriteString(scanner.Text()+"\n")
+			if deleteCmtChars{
+				finalString := removeCommentCharacters(scanner.Text(),cmtChars)
+				f.WriteString(finalString+"\n")
+			} else {
+				f.WriteString(scanner.Text()+"\n")
+			}
 			lineNumber += 1
 			continue
 		}
@@ -102,7 +110,12 @@ func fileProcessing(filename string,f *os.File,addLineNumber bool){
 			if addLineNumber{
 				f.WriteString(strconv.Itoa(lineNumber)+" ")
 			}
-			f.WriteString(scanner.Text()+"\n")
+			if deleteCmtChars {
+				finalString := removeCommentCharacters(scanner.Text(),cmtChars)
+				f.WriteString(finalString+"\n")
+			} else {
+				f.WriteString(scanner.Text()+"\n")
+			}
 			isMultilineComment = true
 			lineNumber += 1
 			continue
@@ -113,7 +126,12 @@ func fileProcessing(filename string,f *os.File,addLineNumber bool){
 			if addLineNumber{
 				f.WriteString(strconv.Itoa(lineNumber)+" ")
 			}
-			f.WriteString(scanner.Text()+"\n")
+			if deleteCmtChars {
+				finalString := removeCommentCharacters(scanner.Text(),cmtChars)
+				f.WriteString(finalString+"\n")
+			} else {
+				f.WriteString(scanner.Text()+"\n")
+			}
 			isMultilineComment = false
 			lineNumber += 1
 			continue
@@ -122,7 +140,12 @@ func fileProcessing(filename string,f *os.File,addLineNumber bool){
 			if addLineNumber{
 				f.WriteString(strconv.Itoa(lineNumber)+" ")
 			}
-			f.WriteString(scanner.Text()+"\n")
+			if deleteCmtChars {
+				finalString := removeCommentCharacters(scanner.Text(),cmtChars)
+				f.WriteString(finalString+"\n")
+			} else {
+				f.WriteString(scanner.Text()+"\n")
+			}
 			lineNumber += 1
 			continue
 		}

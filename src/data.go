@@ -9,6 +9,7 @@ type DataStruct struct {
 	Single     string
 	MulB	   string
 	MulE       string
+	CmtChars []string
 }
 
 func getData() []DataStruct {
@@ -19,6 +20,8 @@ func getData() []DataStruct {
 			Single: `#[^!].+$|^'.+'$`,
 			MulB: `\"\"\".*`,
 			MulE: `.*\"\"\"`,
+			CmtChars: []string{"#",`"""`,`'`},
+
 			// Regex:     `#[^!].+$|=begin[\s|\S]+=end$|<!--[\s|\S]-->$|:\'[\s|\S][^']+\'$`,
 		},
 		{
@@ -26,6 +29,7 @@ func getData() []DataStruct {
 			Single: `#[^!].+`,
 			MulB: `=begin`,
 			MulE: `=end|=cut`,
+			CmtChars: []string{"#","=begin","=end","=cut"},
 		},
 		{
 			Extension: []string{"dart", "c", "cpp", "h", "hpp", "java", "js", "ts", "kt", "go", "css"},
@@ -33,6 +37,7 @@ func getData() []DataStruct {
 			Single: `\/\/.+`,
 			MulB: `\/\*.*`,
 			MulE: `.*\*\/`,
+			CmtChars: []string{"//","/*","*/"},
 		},
 	}
 	return Data
@@ -50,4 +55,26 @@ func GetRegex(filename string) (string,string,string) {
 		}
 	}
 	return "","",""
+}
+
+func GetCommentCharacters(filename string) []string{
+	fileNameList := strings.Split(filename,".")
+	fileExtension:=fileNameList[len(fileNameList)-1]
+
+	for _,v := range getData(){
+		for _,val := range v.Extension{
+			if  val == fileExtension {
+				return v.CmtChars
+			}
+		}
+	}
+	return []string{}
+}
+
+func removeCommentCharacters(text string,cmtChars []string) string {
+	for i := range cmtChars {
+		result :=strings.ReplaceAll(text,cmtChars[i],"")
+		text = result
+	}
+	return text
 }

@@ -10,6 +10,6 @@ _work in progress_ :construction:
 > Python, Ruby, R, Perl.__
 
 ### Aug 18:
-> 1. Added feature for extracting the line number of the comments from the source flie(s)
-> 2. Added the support for single-line as well as multi-line documentation comments in python </br>
-
+> 1. Added feature for extracting the line number of the comments from the source flie(s) ( _using the flag -ln_ )
+> 2. Added the support for single-line as well as multi-line documentation comments in python
+> 3. Added the support for removing the comment characters from the outfile ( _using the flag -rc_ )

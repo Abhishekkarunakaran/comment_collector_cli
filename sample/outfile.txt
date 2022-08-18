@@ -1,0 +1,19 @@
+main.py
+
+ This is a comment
+
+This is a multiline documentation comment
+
+This is a single line docstring
+end of the file
+
+main.dart
+
+ This is a single-line comment
+ This is a multiline comment
+khkasdf 
+
+lkjlkdjlgjasdga
+
+ This is the end of the line
+
