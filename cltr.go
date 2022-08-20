@@ -60,7 +60,7 @@ func commands(){
 
 				outfile:="outfile.txt"
 				
-				if(len(c.StringSlice("source"))==0){
+				if (len(c.StringSlice("source"))==0){
 					fmt.Println("source file should be defined")
 					os.Exit(0)
 				}

@@ -91,7 +91,15 @@ func fileProcessing(filename string,f *os.File,addLineNumber bool,deleteCmtChars
 	for scanner.Scan(){
 		matchSingleLine,err:=regexp.Match(single,[]byte(scanner.Text()))
 		ErrorCheck(err)
+				
 		if matchSingleLine{
+			firstChar := string(scanner.Text()[0])
+			
+			//? This could go wrong (works perfectly for python)
+			if firstChar != string(string(cmtChars[0])[0]) && firstChar != `'`{
+				ProcessLineNotStartsWithCmt(scanner.Text(),cmtChars[0],single,f,addLineNumber,deleteCmtChars,lineNumber)
+				continue
+			}
 			if addLineNumber{
 				f.WriteString(strconv.Itoa(lineNumber)+" ")
 			}
