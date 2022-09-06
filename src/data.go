@@ -43,8 +43,24 @@ func getData() []DataStruct {
 	return Data
 }
 
-func GetRegex(filename string) (string,string,string) {
+/* 
+Multiline comment for test
+*/
 
+func SupportedFiles(filepath string) bool{
+	fileNameList := strings.Split(filepath,".")
+	fileExtension:=fileNameList[len(fileNameList)-1]
+	for _,v := range getData() {
+		for _,val := range v.Extension{
+			if (val == fileExtension){
+				return true
+			}
+		}
+	}
+		return false
+}
+
+func GetRegex(filename string) (string,string,string) {
 	fileNameList := strings.Split(filename,".")
 	fileExtension:=fileNameList[len(fileNameList)-1]
 	for _,v := range getData() {

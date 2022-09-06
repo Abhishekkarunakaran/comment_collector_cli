@@ -6,15 +6,45 @@ import (
 	"os"
 	"regexp"
 	"strconv"
-	// "time"
-	// "github.com/nathan-fiscaletti/consolesize-go"
+	"path/filepath"
+	"strings"
 )
 
 func getFiles(files []string) []string {
+	var outFiles []string
+	curDir, err := os.Getwd()
+	ErrorCheck(err)
+
+	//! if the user need a the files inside currentDirectory
 	if (files[0] == "."){
-		//TODO: functionality to get the files in current location
+		
+
+		er := filepath.Walk(curDir,func(path string,info os.FileInfo,err error) error{
+			if err != nil{
+				fmt.Println(err)
+				return err
+			}
+			ignore,errFromRegex:=regexp.Match(`.*.git.*`,[]byte(path))
+			ErrorCheck(errFromRegex)
+
+
+			if (!info.IsDir() && !ignore && SupportedFiles(path)){
+				// fmt.Println(path)
+				outFiles = append(outFiles,path)
+				
+			}
+			return nil
+		})
+		ErrorCheck(er)
+	
+		return outFiles
 	}
-	return files
+
+	for _,file := range(files){
+		outFiles = append(outFiles,curDir+"/"+file)
+	}
+	fmt.Println(outFiles)
+	return outFiles
 }
 
 func Run(filesFromUser []string,outfile string,extract bool,addLineNumber bool,deleteCmtChars bool){
@@ -40,10 +70,16 @@ func Run(filesFromUser []string,outfile string,extract bool,addLineNumber bool,d
 	defer f.Close()
 
 	// TODO: Test this line of code in production
-
 	// fmt.Print("\033[1A\033[K")
+
+	curDir, err := os.Getwd()
+	ErrorCheck(err)
+	currentDirectoryList := strings.Split(curDir,"/")
+	currentDirectory := currentDirectoryList[len(currentDirectoryList)-1]
 	for _,file := range files{
-		fmt.Print(file)
+		foldFileList := strings.Split(file,currentDirectory)
+		foldFile := foldFileList[len(foldFileList)-1]
+		fmt.Print(foldFile)
 		fileProcessing(file,f,addLineNumber,deleteCmtChars)
 		// This line erases the recently printed line from terminal
 		fmt.Println(" ✓")
@@ -74,8 +110,8 @@ func fileProcessing(filename string,f *os.File,addLineNumber bool,deleteCmtChars
 
 	single,mulb,mule:= GetRegex(filename)
 	if (single == "") {
-		fmt.Printf("file type of \"%v\" is not supported\n",filename)
-		os.Exit(0)
+		fmt.Printf("\nfile type of \"%v\" is not supported\n",filename)
+		// os.Exit(0)
 	}
 	cmtChars := GetCommentCharacters(filename)
 

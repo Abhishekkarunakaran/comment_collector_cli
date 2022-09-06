@@ -1,9 +1,6 @@
 package main
 
 import (
-	// "flag"
-	// "cltr/src"
-	// "fmt"
 	"cltr/src"
 	"fmt"
 	"os"
@@ -84,34 +81,4 @@ func main()  {
 	commands()
 	app.Run(os.Args)
 
-
-
-
-
-
-	// var command string
-	// commands :=[]string{"run","help","version"}
-
-	// if len(os.Args) == 1{ 
-	// 	//if the is no command
-	// 	fmt.Println("help")
-	// 	os.Exit(0)
-	// } else{
-	// 	//checking whether it is a valid command
-	// 	if src.Contains(os.Args[1],commands){ 
-	// 		command = os.Args[1]
-	// 	} else {
-	// 		fmt.Println("Wrong usage")
-	// 		fmt.Println("help")
-	// 	}
-	// }
-	
-	// switch command{
-	// case "run":
-	// 	src.Run()
-	// 	fmt.Println("run")
-	// case "help":
-	// 	src.PrintHelp()
-	// 	fmt.Println("help")
-	// }
 }
