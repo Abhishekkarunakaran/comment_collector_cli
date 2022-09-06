@@ -23,7 +23,7 @@
 4 
 5 This is a single line docstring
 8 The comment with the code
-12 end of the file
+src12 end of the file
 
 /home/ronin/Documents/projects/golang_projects/comment_collector_cli/src/data.go
 

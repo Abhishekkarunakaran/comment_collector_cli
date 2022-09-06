@@ -24,3 +24,11 @@ _work in progress_ :construction:
 > ```
 > New version supports the extract of theline "`#This is the main function`"
 > Issue reported by [Ananthu B](https://github.com/AnanthuB2001)
+
+### Sept 7:
+> The binary can run in any directory.</br>
+>**cltr** finds the location of working directory and work with the sourcecode files in the subdirectories.
+> #### bug:</br>
+> regex also matches single-line comment character ( // ) in a string. The rest of the line including the comment character is extracted from the file.</br>
+Go through the file: <u></br>*outfile.txt*  line.no.33</br><u>
+[check here](https://github.com/Abhishekkarunakaran/comment_collector_cli/tree/main/sample/outfile.txt)
