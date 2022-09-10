@@ -34,7 +34,7 @@ func getData() []DataStruct {
 		{
 			Extension: []string{"dart", "c", "cpp", "h", "hpp", "java", "js", "ts", "kt", "go", "css"},
 			// support for single-line as well as multi-line comments
-			Single: `\/\/.+`,
+			Single: `\/\/.*`,
 			MulB: `\/\*.*`,
 			MulE: `.*\*\/`,
 			CmtChars: []string{"//","/*","*/"},

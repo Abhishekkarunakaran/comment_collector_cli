@@ -57,8 +57,8 @@ func Run(filesFromUser []string,outfile string,extract bool,addLineNumber bool,d
 		fmt.Println("Processing ...")
 	}
 
-	if CheckFileExists("outfile.txt") && outfile != "outfile.txt" {
-		e:= os.Remove("outfile.txt")
+	if CheckFileExists("outfile.md") && outfile != "outfile.md" {
+		e:= os.Remove("outfile.md")
 		ErrorCheck(e)
 	}
 	if CheckFileExists(outfile){
@@ -80,7 +80,7 @@ func Run(filesFromUser []string,outfile string,extract bool,addLineNumber bool,d
 		foldFileList := strings.Split(file,currentDirectory)
 		foldFile := foldFileList[len(foldFileList)-1]
 		fmt.Print(foldFile)
-		fileProcessing(file,f,addLineNumber,deleteCmtChars)
+		fileProcessing(file,foldFile,f,addLineNumber,deleteCmtChars)
 		// This line erases the recently printed line from terminal
 		fmt.Println(" ✓")
 	}
@@ -104,7 +104,7 @@ func Run(filesFromUser []string,outfile string,extract bool,addLineNumber bool,d
 
 
 
-func fileProcessing(filename string,f *os.File,addLineNumber bool,deleteCmtChars bool){
+func fileProcessing(filename string,filenameshort string,f *os.File,addLineNumber bool,deleteCmtChars bool){
 
 	isMultilineComment := false
 
@@ -119,8 +119,10 @@ func fileProcessing(filename string,f *os.File,addLineNumber bool,deleteCmtChars
 	ErrorCheck(err)
 	defer file.Close()
 
-	f.WriteString(filename+"\n\n")
 
+
+	f.WriteString("## "+filenameshort+"\n\n")
+	f.WriteString("```\n")
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	lineNumber := 1
@@ -195,5 +197,6 @@ func fileProcessing(filename string,f *os.File,addLineNumber bool,deleteCmtChars
 		}
 		lineNumber += 1
 	}
-	f.WriteString("\n")
+
+	f.WriteString("```\n")
 }

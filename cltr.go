@@ -55,7 +55,7 @@ func commands(){
 			// Action upon the run command
 			Action: func (c *cli.Context) error {
 
-				outfile:="outfile.txt"
+				outfile:="outfile.md"
 				
 				if (len(c.StringSlice("source"))==0){
 					fmt.Println("source file should be defined")
