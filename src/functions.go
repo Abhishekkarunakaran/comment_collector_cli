@@ -77,7 +77,7 @@ func Run(filesFromUser []string,outfile string,extract bool,addLineNumber bool,d
 	currentDirectoryList := strings.Split(curDir,"/")
 	currentDirectory := currentDirectoryList[len(currentDirectoryList)-1]
 	for _,file := range files{
-		foldFileList := strings.Split(file,currentDirectory)
+		foldFileList := strings.Split(file,currentDirectory+"/")
 		foldFile := foldFileList[len(foldFileList)-1]
 		fmt.Print(foldFile)
 		fileProcessing(file,foldFile,f,addLineNumber,deleteCmtChars)
