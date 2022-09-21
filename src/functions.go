@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
-	"path/filepath"
 	"strings"
 )
 
@@ -41,7 +41,9 @@ func getFiles(files []string) []string {
 	}
 
 	for _,file := range(files){
-		outFiles = append(outFiles,curDir+"/"+file)
+
+		outFiles = append(outFiles,curDir+string(os.PathSeparator)+file)
+
 	}
 	fmt.Println(outFiles)
 	return outFiles
@@ -74,10 +76,10 @@ func Run(filesFromUser []string,outfile string,extract bool,addLineNumber bool,d
 
 	curDir, err := os.Getwd()
 	ErrorCheck(err)
-	currentDirectoryList := strings.Split(curDir,"/")
+	currentDirectoryList := strings.Split(curDir,string(os.PathSeparator)) 
 	currentDirectory := currentDirectoryList[len(currentDirectoryList)-1]
 	for _,file := range files{
-		foldFileList := strings.Split(file,currentDirectory+"/")
+		foldFileList := strings.Split(file,currentDirectory+string(os.PathSeparator))
 		foldFile := foldFileList[len(foldFileList)-1]
 		fmt.Print(foldFile)
 		fileProcessing(file,foldFile,f,addLineNumber,deleteCmtChars)
@@ -152,7 +154,7 @@ func fileProcessing(filename string,filenameshort string,f *os.File,addLineNumbe
 		}
 		matchMullineBegin,err:=regexp.Match(mulb,[]byte(scanner.Text()))
 		ErrorCheck(err)
-		if matchMullineBegin && isMultilineComment==false {
+		if matchMullineBegin && !isMultilineComment {
 			if addLineNumber{
 				f.WriteString(strconv.Itoa(lineNumber)+" ")
 			}
@@ -168,7 +170,7 @@ func fileProcessing(filename string,filenameshort string,f *os.File,addLineNumbe
 		}
 		matchMullineEnd,err:=regexp.Match(mule,[]byte(scanner.Text()))
 		ErrorCheck(err)
-		if matchMullineEnd && isMultilineComment==true {
+		if matchMullineEnd && isMultilineComment {
 			if addLineNumber{
 				f.WriteString(strconv.Itoa(lineNumber)+" ")
 			}

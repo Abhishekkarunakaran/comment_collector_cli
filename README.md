@@ -30,5 +30,9 @@ _work in progress_ :construction:
 >**cltr** finds the location of working directory and work with the sourcecode files in the subdirectories.
 > #### bug:</br>
 > regex also matches single-line comment character ( // ) in a string. The rest of the line including the comment character is extracted from the file.</br>
-Go through the file: <u></br>*outfile.txt*  line.no.33</br><u>
+Go through the file: <u></br>*outfile.md*  `src/data.go - line.no.37`</br></u>
 [check here](https://github.com/Abhishekkarunakaran/comment_collector_cli/tree/main/sample/outfile.txt)
+
+### Sept 21:
+> When using '.' in the command `cltr run -s .` to indicate the whole files in the directory, there was this issue of the path separator.The windows and Linux-Unix uses different file separators. The code that handles the whole files in the working directory was written using a Linux Machine (Fedora). When the code executed in Windows (10), It prints the whole file location.</br></br>
+> It is corrected using passing `os.PathSeparator` instead of the hardcoding the path separator character for each operating systems.
